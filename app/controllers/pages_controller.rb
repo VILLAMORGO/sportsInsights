@@ -17,6 +17,7 @@ class PagesController < ApplicationController
   def chatbot
     @user = User.find(params[:user_id])
     @response = @user.responses.build
+    puts @user.name
 
     # Provide an initial question if there are no responses yet
     if @user.responses.empty?
