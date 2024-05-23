@@ -1,23 +1,36 @@
 <div class="flex flex-col min-h-screen max-h-screen">
-  <section class="w-full md:w-2/3 min-h-12  p-4 mx-auto ">
+  <section class="w-full md:w-2/3 min-h-12 p-4 mx-auto">
     <h3 class="font-medium tracking-wider">Chatbot</h3>
   </section>
-  <section class="w-full min-h-[540px] px-10 pt-8 flex flex-col border-t-2 border-green-700">
-    
-   
+
+  <section class="w-full min-h-[540px] px-10 pt-8 flex flex-col border-t-2 border-green-700 overflow-auto">
+    <% @responses.each do |response| %>
+      <% if response.content.present? %>
+        <div class="mb-4">
+          <p class="text-left text-black"><strong>User:</strong> <%= response.content.presence || "No content" %></p>
+        </div>
+      <% end %>
+      <% if response.bot_response.present? %>
+        <div class="mb-4">
+          <p class="text-left text-green-700"><strong>Bot:</strong> <%= response.bot_response %></p>
+        </div>
+      <% end %>
+    <% end %>
   </section>
+
   <section class="w-full min-h-10 md:min-h-28 px-6 flex flex-col justify-end pb-5">
-    <textarea name="" id="expandableTextarea" rows="1" class="w-full md:w-1/2 min-h-8 md:min-h-12 px-6 py-auto mx-auto border border-zinc-200 text-black bg-zinc-50 rounded-3xl"></textarea>
+    <%= form_with model: @response, url: create_response_path(user_id: @user.id), local: true do |form| %>
+      <%= form.text_area :content, rows: 1, id: 'expandableTextarea', class: 'w-full md:w-1/2 min-h-8 md:min-h-12 px-6 py-auto mx-auto border border-zinc-200 text-black bg-zinc-50 rounded-3xl' %>
+      <%= form.submit 'Send', class: 'mt-4 px-4 py-2 bg-emerald-700 text-white rounded-md cursor-pointer' %>
+    <% end %>
   </section>
 </div>
 
 <script>
-    const textarea = document.getElementById('expandableTextarea');
+  const textarea = document.getElementById('expandableTextarea');
 
-    textarea.addEventListener('input', function() {
-        // Reset the height to allow shrinking
-        this.style.height = 'auto';
-        // Set the height to scrollHeight (ensuring it can grow)
-        this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
-    });
+  textarea.addEventListener('input', function() {
+    this.style.height = 'auto';
+    this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
+  });
 </script>
