@@ -31,21 +31,27 @@ class PagesController < ApplicationController
   def create_response
     @user = User.find(params[:user_id])
     @response = @user.responses.build(response_params)
-
+  
     if @response.save
       # Prepare conversation history
       conversation_history = build_conversation_history(@user.responses)
-
+  
       # Generate bot response and save it
       bot_response_content = generate_response(@response.content, conversation_history)
       @response.update(bot_response: bot_response_content)
-
-      redirect_to chatbot_path(user_id: @user.id), notice: 'Response saved successfully.'
+  
+      respond_to do |format|
+        format.html { redirect_to chatbot_path(user_id: @user.id), notice: 'Response saved successfully.' }
+        format.json { render json: { user_message: @response.content, bot_response: bot_response_content } }
+      end
     else
       @responses = @user.responses.order(:created_at)
-      render :chatbot
+      respond_to do |format|
+        format.html { render :chatbot }
+        format.json { render json: { error: 'Error saving response' }, status: :unprocessable_entity }
+      end
     end
-  end
+  end  
 
   private
 

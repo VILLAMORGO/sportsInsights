@@ -25,7 +25,7 @@
   </section>
   
   <section id="formSection" class="w-full px-6 py-3 bg-white border-t border-gray-200 fixed bottom-0">
-    <%= form_with model: @response, class: "flex w-full md:w-3/4 mx-auto", url: create_response_path(user_id: @user.id), local: true do |form| %>
+    <%= form_with model: @response, class: "flex w-full md:w-3/4 mx-auto", url: create_response_path(user_id: @user.id), local: true, id: "chatForm" do |form| %>
       <%= form.text_area :content, rows: 1, id: 'expandableTextarea', class: 'flex-grow mx-3 px-6 py-2 border border-zinc-200 text-black bg-zinc-50 rounded-3xl resize-none' %>
       <%= button_tag(type: 'submit', class: 'send-button bg-blue-500 text-white p-2 ml-2 rounded-lg flex items-center justify-center') do %>
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -35,3 +35,72 @@
     <% end %>
   </section>
 </div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+  const messagesContainer = document.getElementById('messagesContainer');
+  const chatForm = document.getElementById('chatForm');
+  const textArea = document.getElementById('expandableTextarea');
+
+  function scrollToBottom() {
+    messagesContainer.scrollTop = messagesContainer.scrollHeight;
+  }
+
+  chatForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const formData = new FormData(chatForm);
+    fetch(chatForm.action, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'X-CSRF-Token': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+      },
+      body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.error) {
+        console.error(data.error);
+      } else {
+        // Append user message
+        const userMessageDiv = document.createElement('div');
+        userMessageDiv.classList.add('user-message', 'mb-4', 'flex', 'justify-end');
+        userMessageDiv.innerHTML = `
+          <div class="message-box bg-blue-500 text-white p-3 rounded-lg max-w-sm">
+            <p class="text-right text-base md:text-lg"><strong>User:</strong> ${data.user_message}</p>
+          </div>
+        `;
+        messagesContainer.appendChild(userMessageDiv);
+
+        // Append bot response
+        const botMessageDiv = document.createElement('div');
+        botMessageDiv.classList.add('bot-message', 'mb-4', 'flex', 'justify-start');
+        botMessageDiv.innerHTML = `
+          <div class="message-box bg-gray-200 text-black p-3 rounded-lg max-w-sm">
+            <p class="text-left text-base md:text-lg"><strong>Bot:</strong> ${data.bot_response}</p>
+          </div>
+        `;
+        messagesContainer.appendChild(botMessageDiv);
+
+        // Clear the textarea
+        textArea.value = '';
+
+        // Scroll to the bottom
+        scrollToBottom();
+      }
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  });
+
+  // Scroll to the bottom initially
+  scrollToBottom();
+
+  // Observe changes in the messagesContainer and scroll to bottom when new messages are added
+  const observer = new MutationObserver(scrollToBottom);
+  observer.observe(messagesContainer, { childList: true });
+});
+
+</script>
