@@ -70,5 +70,5 @@ group :test do
 end
 
 gem "ruby-openai", "~> 7.0"
-gem 'jquery-rails', '~> 4.4'
+gem 'sassc-rails'
 

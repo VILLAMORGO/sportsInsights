@@ -13,8 +13,24 @@
  *= require_tree .
  *= require_self
  */
- *{
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+*{
+margin: 0;
+padding: 0;
+box-sizing: border-box;
 }
+
+.flex-1 {
+    flex: 1;
+}
+  
+html, body, .h-screen {
+height: 100%;
+margin: 0;
+padding: 0;
+}
+
+#convoSection {
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+  
