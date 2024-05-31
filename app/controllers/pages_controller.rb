@@ -18,28 +18,32 @@ class PagesController < ApplicationController
     @user = User.find(params[:user_id])
     @response = @user.responses.build
     puts @user.name
+    puts @user.responses.all.inspect
 
-    # Provide an initial question if there are no responses yet
-    if @user.responses.empty?
+    if @user.responses.all.empty?
       initial_question = generate_initial_response
-      @user.responses.create(content: nil, bot_response: initial_question)
+      @initial_response = @user.responses.create(content: nil, bot_response: initial_question)
+      if @initial_response.persisted?
+        puts "Initial question: #{initial_question}" 
+      else
+        puts "Failed to save initial question"
+      end
     end
 
     @responses = @user.responses.order(:created_at)
+    puts @responses.inspect  
   end
 
   def create_response
     @user = User.find(params[:user_id])
     @response = @user.responses.build(response_params)
-  
+
     if @response.save
-      # Prepare conversation history
       conversation_history = build_conversation_history(@user.responses)
-  
-      # Generate bot response and save it
+
       bot_response_content = generate_response(@response.content, conversation_history)
       @response.update(bot_response: bot_response_content)
-  
+
       respond_to do |format|
         format.html { redirect_to chatbot_path(user_id: @user.id), notice: 'Response saved successfully.' }
         format.json { render json: { user_message: @response.content, bot_response: bot_response_content } }
@@ -65,7 +69,9 @@ class PagesController < ApplicationController
   end
 
   def generate_initial_response
-    "Hi there! Thank you for taking part in our survey. We value your time and feedback. To begin, we'd like to learn a little about your child's participation in sports. How old is your child?"
+    conversation_history = [] 
+    chat_service = ChatService.new(message: "Generate introduction with initial question", conversation_history: conversation_history)
+    chat_service.call
   end
 
   def user_params
