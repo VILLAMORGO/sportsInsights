@@ -3,33 +3,35 @@
     <h3 class="font-medium tracking-wider">Chatbot</h3>
   </section>
   
-  <section id="convoSection" class="flex-1 w-full px-10 pt-8 flex justify-center overflow-auto mt-10 mb-16">
-    <div class="w-full md:w-3/4">
-      <% @responses.each do |response| %>
-        <% if response.content.present? %>
-          <div class="user-message mb-4 flex justify-end">
-            <div class="message-box bg-blue-500 text-white p-3 rounded-lg max-w-sm">
-              <p class="text-right text-base md:text-lg"><strong><%= @user.name %>:</strong> <%= response.content.presence || "No content" %></p>
+  <div id="convoSection" class="flex-1 w-full px-10 pt-8 flex justify-center overflow-auto mt-10 mb-16">
+    <div data-controller="scroll" id="response" class="w-full md:w-3/4">
+      <turbo-frame id="messages">
+        <% @responses.each do |response| %>
+          <% if response.content.present? %>
+            <div class="user-message mb-4 flex justify-end">
+              <div class="message-box bg-blue-500 text-white p-3 rounded-lg max-w-sm">
+                <p class="text-right text-base md:text-lg"><strong><%= @user.name %>:</strong> <%= response.content.presence || "No content" %></p>
+              </div>
             </div>
-          </div>
-        <% end %>
-        <% if response.bot_response.present? %>
-          <div class="bot-message mb-4 flex justify-start">
-            <div class="message-box bg-gray-200 text-black p-3 rounded-lg max-w-sm">
-              <p class="text-left text-base md:text-lg"><strong>Bot:</strong> <%= response.bot_response %></p>
+          <% end %>
+          <% if response.bot_response.present? %>
+            <div class="bot-message mb-4 flex justify-start">
+              <div class="message-box bg-gray-200 text-black p-3 rounded-lg max-w-sm">
+                <p class="text-left text-base md:text-lg"><strong>Bot:</strong> <%= response.bot_response %></p>
+              </div>
             </div>
-          </div>
+          <% end %>
         <% end %>
-      <% end %>
+      </turbo-frame>
     </div>
-  </section>
+  </div>
   
   <section id="formSection" class="w-full px-6 py-3 bg-white border-t border-gray-200 fixed bottom-0">
-    <%= form_with model: @response, class: "flex w-full md:w-3/4 mx-auto", url: create_response_path(user_id: @user.id), local: true, id: "chatForm" do |form| %>
+    <%= form_with model: @response, class: "flex w-full md:w-3/4 mx-auto", url: create_response_path(user_id: @user.id), local: false, data: { turbo_frame: 'messages' }, id: "chatForm" do |form| %>
       <%= form.text_area :content, rows: 1, id: 'expandableTextarea', class: 'flex-grow mx-3 px-6 py-2 border border-zinc-200 text-black bg-zinc-50 rounded-3xl resize-none' %>
       <%= button_tag(type: 'submit', class: 'send-button bg-blue-500 text-white p-2 ml-2 rounded-lg flex items-center justify-center') do %>
         <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7 7"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M12 5l7 7-7-7"></path>
         </svg>
       <% end %>
     <% end %>

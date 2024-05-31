@@ -40,18 +40,17 @@ class PagesController < ApplicationController
 
     if @response.save
       conversation_history = build_conversation_history(@user.responses)
-
       bot_response_content = generate_response(@response.content, conversation_history)
       @response.update(bot_response: bot_response_content)
 
       respond_to do |format|
-        format.html { redirect_to chatbot_path(user_id: @user.id), notice: 'Response saved successfully.' }
+        format.turbo_stream
         format.json { render json: { user_message: @response.content, bot_response: bot_response_content } }
       end
     else
       @responses = @user.responses.order(:created_at)
       respond_to do |format|
-        format.html { render :chatbot }
+        format.turbo_stream { render turbo_stream: turbo_stream.replace("messages", partial: "pages/messages", locals: { responses: @responses, user: @user }) }
         format.json { render json: { error: 'Error saving response' }, status: :unprocessable_entity }
       end
     end
