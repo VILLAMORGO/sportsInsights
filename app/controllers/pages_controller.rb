@@ -37,12 +37,12 @@ class PagesController < ApplicationController
   def create_response
     @user = User.find(params[:user_id])
     @response = @user.responses.build(response_params)
-
+  
     if @response.save
       conversation_history = build_conversation_history(@user.responses)
       bot_response_content = generate_response(@response.content, conversation_history)
       @response.update(bot_response: bot_response_content)
-
+  
       respond_to do |format|
         format.turbo_stream
         format.json { render json: { user_message: @response.content, bot_response: bot_response_content } }
@@ -54,7 +54,7 @@ class PagesController < ApplicationController
         format.json { render json: { error: 'Error saving response' }, status: :unprocessable_entity }
       end
     end
-  end  
+  end    
 
   private
 
