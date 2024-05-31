@@ -1,13 +1,10 @@
-import jQuery from "jquery";
-window.$ = window.jQuery = jQuery;
-
-document.addEventListener('DOMContentLoaded', function() {
-  console.log("DOMContentLoaded event triggered");
+document.addEventListener('turbo:load', function() {
+  console.log("turbo:load event triggered");
 
   function adjustConvoHeight() {
-    const windowHeight = $(window).height();
-    const headerHeight = $('section:nth-of-type(1)').outerHeight();
-    const formHeight = $('#formSection').outerHeight();
+    const windowHeight = window.innerHeight;
+    const headerHeight = document.querySelector('section:nth-of-type(1)').offsetHeight;
+    const formHeight = document.getElementById('formSection').offsetHeight;
     const convoHeight = windowHeight - headerHeight - formHeight;
 
     console.log(`windowHeight: ${windowHeight}`);
@@ -15,48 +12,52 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log(`formHeight: ${formHeight}`);
     console.log(`convoHeight: ${convoHeight}`);
 
-    $('#convoSection').css('height', convoHeight + 'px');
+    document.getElementById('convoSection').style.height = convoHeight + 'px';
   }
 
   function scrollToBottom() {
-    const $convoSection = $('#convoSection');
-    $convoSection.scrollTop($convoSection.prop("scrollHeight"));
+    const convoSection = document.getElementById('convoSection');
+    convoSection.scrollTop = convoSection.scrollHeight;
   }
 
   adjustConvoHeight();
   scrollToBottom();
 
-  $(window).resize(function() {
+  window.addEventListener('resize', function() {
     adjustConvoHeight();
     scrollToBottom();
   });
 
-  $('#expandableTextarea').on('input', function() {
+  document.getElementById('expandableTextarea').addEventListener('input', function() {
     this.style.height = 'auto';
     this.style.height = (this.scrollHeight > 120 ? 120 : this.scrollHeight) + 'px';
     adjustConvoHeight();
   });
 
-  // MutationObserver to scroll to bottom when new messages are added
-  const observer = new MutationObserver(function(mutationsList) {
-    for (const mutation of mutationsList) {
-      if (mutation.type === 'childList') {
-        console.log("New child added to convoSection");
-        scrollToBottom();
-      }
+  // Clear the form input after a successful Turbo Stream response
+  document.addEventListener('turbo:submit-end', function(event) {
+    if (event.detail.success) {
+      const form = document.getElementById('chatForm');
+      form.reset();
+      // Reset the textarea height
+      const textarea = document.getElementById('expandableTextarea');
+      textarea.style.height = 'auto';
+      adjustConvoHeight();
     }
   });
 
-  const target = document.querySelector('#convoSection > div');
-  if (target) {
-    observer.observe(target, { childList: true, subtree: true });
-  } else {
-    console.error("Target for MutationObserver not found");
-  }
+  // Scroll to bottom after Turbo Frame renders new content
+  document.addEventListener('turbo:frame-render', function(event) {
+    if (event.target.id === 'messages') {
+      console.log("Turbo Frame 'messages' rendered");
+      scrollToBottom();
+    }
+  });
 
-  // Ensure the scroll position is set after the entire page is loaded
-  $(window).on('load', function() {
-    console.log("windows on load")
-    scrollToBottom();
+  // Scroll to bottom after Turbo Stream append
+  document.addEventListener('turbo:before-stream-render', function(event) {
+    if (event.target.action === 'append' && event.target.target === 'messages') {
+      scrollToBottom();
+    }
   });
 });
