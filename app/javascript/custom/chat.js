@@ -53,4 +53,11 @@ document.addEventListener('turbo:load', function() {
       scrollToBottom();
     }
   });
+
+  // Scroll to bottom after Turbo Stream append
+  document.addEventListener('turbo:before-stream-render', function(event) {
+    if (event.target.action === 'append' && event.target.target === 'messages') {
+      scrollToBottom();
+    }
+  });
 });

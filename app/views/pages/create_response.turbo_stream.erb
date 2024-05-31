@@ -1,12 +1,16 @@
 <%= turbo_stream.append "messages" do %>
-  <div class="user-message mb-4 flex justify-end">
-    <div class="message-box bg-blue-500 text-white p-3 rounded-lg max-w-sm">
-      <p class="text-right text-base md:text-lg"><strong><%= @user.name %>:</strong> <%= @response.content.presence || "No content" %></p>
+  <% if @response.content.present? %>
+    <div class="user-message mb-4 flex justify-end">
+      <div class="message-box bg-blue-500 text-white p-3 rounded-lg max-w-sm">
+        <p class="text-right text-base md:text-lg"><strong><%= @user.name %>:</strong> <%= @response.content.presence || "No content" %></p>
+      </div>
     </div>
-  </div>
-  <div class="bot-message mb-4 flex justify-start">
-    <div class="message-box bg-gray-200 text-black p-3 rounded-lg max-w-sm">
-      <p class="text-left text-base md:text-lg"><strong>Bot:</strong> <%= @response.bot_response %></p>
+  <% end %>
+  <% if @response.bot_response.present? %>
+    <div class="bot-message mb-4 flex justify-start">
+      <div class="message-box bg-gray-200 text-black p-3 rounded-lg max-w-sm">
+        <p class="text-left text-base md:text-lg"><strong>Bot:</strong> <%= @response.bot_response %></p>
+      </div>
     </div>
-  </div>
+  <% end %>
 <% end %>
