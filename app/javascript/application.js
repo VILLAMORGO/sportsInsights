@@ -2,5 +2,5 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 import "./custom/jquery.js"
-import "./chat.js"
+import "./custom/chat.js"
 import "./custom/autoScroll.js"
