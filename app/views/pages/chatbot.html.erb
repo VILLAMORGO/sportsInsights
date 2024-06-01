@@ -4,7 +4,7 @@
   </section>
   
   <div id="convoSection" class="flex-1 w-full px-10 pt-8 flex justify-center overflow-auto mt-10 mb-16">
-    <div data-controller="scroll" id="response" class="w-full md:w-3/4">
+    <div id="response" class="w-full md:w-3/4">
       <turbo-frame id="messages">
         <div id="messages">
           <% @responses.each do |response| %>
@@ -25,6 +25,7 @@
           <% end %>
         </div>
       </turbo-frame>
+      <div id="auto-scroll-anchor"></div>
     </div>
   </div>
   

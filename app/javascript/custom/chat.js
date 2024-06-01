@@ -1,3 +1,5 @@
+import autoScroll from "./autoScroll";
+
 document.addEventListener('turbo:load', function() {
   console.log("turbo:load event triggered");
 
@@ -15,17 +17,10 @@ document.addEventListener('turbo:load', function() {
     document.getElementById('convoSection').style.height = convoHeight + 'px';
   }
 
-  function scrollToBottom() {
-    const convoSection = document.getElementById('convoSection');
-    convoSection.scrollTop = convoSection.scrollHeight;
-  }
-
   adjustConvoHeight();
-  scrollToBottom();
 
   window.addEventListener('resize', function() {
     adjustConvoHeight();
-    scrollToBottom();
   });
 
   document.getElementById('expandableTextarea').addEventListener('input', function() {
@@ -50,14 +45,14 @@ document.addEventListener('turbo:load', function() {
   document.addEventListener('turbo:frame-render', function(event) {
     if (event.target.id === 'messages') {
       console.log("Turbo Frame 'messages' rendered");
-      scrollToBottom();
+      autoScroll();
     }
   });
 
   // Scroll to bottom after Turbo Stream append
   document.addEventListener('turbo:before-stream-render', function(event) {
     if (event.target.action === 'append' && event.target.target === 'messages') {
-      scrollToBottom();
+      autoScroll();
     }
   });
 });
