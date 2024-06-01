@@ -3,3 +3,4 @@ import "@hotwired/turbo-rails"
 import "controllers"
 import './custom/jquery'
 import "./custom/chat"
+import "./custom/autoScroll"
