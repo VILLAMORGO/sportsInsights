@@ -1,4 +1,4 @@
-import autoScroll from "./autoScroll";
+import autoScroll from "./custom/autoScroll.js";
 
 document.addEventListener('turbo:load', function() {
   console.log("turbo:load event triggered");
