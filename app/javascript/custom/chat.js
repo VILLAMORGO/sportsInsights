@@ -7,7 +7,9 @@ document.addEventListener('turbo:load', function() {
     const windowHeight = window.innerHeight;
     const headerHeight = document.querySelector('section:nth-of-type(1)').offsetHeight;
     const formHeight = document.getElementById('formSection').offsetHeight;
-    const convoHeight = windowHeight - headerHeight - formHeight;
+    const margingTop = 40;
+    const margingBottom = 64;
+    const convoHeight = windowHeight - headerHeight - formHeight - margingTop - margingBottom;
 
     console.log(`windowHeight: ${windowHeight}`);
     console.log(`headerHeight: ${headerHeight}`);
