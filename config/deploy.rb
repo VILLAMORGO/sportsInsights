@@ -3,6 +3,7 @@ server 'ubuntu@54.242.52.240', port: 22, roles: [:web, :app, :db], primary: true
 
 set :repo_url,        'git@github.com:VILLAMORGO/sportsInsights.git'
 set :application,     'sportsInsights'
+set :branch,          'main'
 
 # If using Digital Ocean's Ruby on Rails Marketplace framework, your username is 'rails'
 set :user,            'ubuntu'
