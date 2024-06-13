@@ -1,5 +1,5 @@
 # Change these
-server '54.242.52.240', port: 22, roles: [:web, :app, :db], primary: true
+server 'ubuntu@54.242.52.240', port: 22, roles: [:web, :app, :db], primary: true
 
 set :repo_url,        'git@github.com:VILLAMORGO/sportsInsights.git'
 set :application,     'sportsInsights'
