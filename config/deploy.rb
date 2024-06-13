@@ -25,7 +25,7 @@ set :pty, true
 set :ssh_options, {
   forward_agent: true,
   auth_methods: ["publickey"],
-  keys: ["/path/to/key.pem"]
+  keys: ["sport_insight.pem"]
 }
 
 set :puma_preload_app, true
