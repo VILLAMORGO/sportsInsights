@@ -33,10 +33,9 @@ set :puma_preload_app, true
 set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
-set :linked_files, fetch(:linked_files, []).push('config/secrets.yml')
+# set :linked_files, fetch(:linked_files, []).push('config/secrets.yml')
 
 append :rbenv_map_bins, 'puma', 'pumactl'
-
 
 ## Defaults:
 # set :scm,           :git
@@ -60,6 +59,8 @@ namespace :puma do
 
   before 'deploy:starting', 'puma:make_dirs'
 end
+
+set :linked_files, fetch(:linked_files, []).push('.env')
 
 namespace :deploy do
   desc "Make sure local git is in sync with remote."
