@@ -34,6 +34,7 @@ set :puma_worker_timeout, nil
 set :puma_init_active_record, true  # Change to false when not using ActiveRecord
 
 # set :linked_files, fetch(:linked_files, []).push('config/secrets.yml')
+set :linked_files, %w{config/secrets.yml}
 
 append :rbenv_map_bins, 'puma', 'pumactl'
 
