@@ -5,6 +5,8 @@ set :repo_url,        'git@github.com:VILLAMORGO/sportsInsights.git'
 set :application,     'sportsInsights'
 set :branch,          'main'
 
+append :rvm_map_bins, 'bundle', 'puma', 'pumactl'
+
 # If using Digital Ocean's Ruby on Rails Marketplace framework, your username is 'rails'
 set :user,            'ubuntu'
 set :puma_threads,    [4, 16]
