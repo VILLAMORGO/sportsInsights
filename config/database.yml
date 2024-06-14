@@ -81,4 +81,4 @@ production:
   <<: *default
   database: sports_insights_production
   username: sports_insights
-  password: <%= ENV["SPORTS_INSIGHTS_DATABASE_PASSWORD"] %>
+  password: <%= Rails.application.credentials.SPORTS_INSIGHTS_DATABASE_PASSWORD %>
