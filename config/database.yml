@@ -80,7 +80,7 @@ test:
 #
 production:
   <<: *default
-  database: sports-insights-production
+  database: sports_insights_production
   username: postgres
   password: eDb8GsbfKj5lczliev61
   host: sports-insights-production.cfjikyjvosbj.us-east-1.rds.amazonaws.com
