@@ -33,3 +33,21 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 
 # Allow puma to be restarted by `bin/rails restart` command.
 plugin :tmp_restart
+
+# Set up socket location
+bind "unix://#{shared_path}/tmp/sockets/sportsInsights-puma.sock"
+
+# Logging
+stdout_redirect "#{shared_path}/log/puma.stdout.log", "#{shared_path}/log/puma.stderr.log", true
+
+# Daemonize the server
+daemonize true
+
+# Preload the application before forking
+preload_app!
+
+# Activate the control app for Puma
+activate_control_app
+
+# Set master PID and state locations
+state_path "#{shared_path}/tmp/pids/puma.state"
