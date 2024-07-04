@@ -1,26 +1,24 @@
 # Change these
-server 'ubuntu@54.242.52.240', port: 22, roles: [:web, :app, :db], primary: true
+server '54.242.52.240', user: 'ubuntu', roles: [:web, :app, :db], primary: true
 
-set :repo_url,        'git@github.com:VILLAMORGO/sportsInsights.git'
-set :application,     'sportsInsights'
-set :branch,          'main'
+set :repo_url, 'git@github.com:VILLAMORGO/sportsInsights.git'
+set :application, 'sportsInsights'
+set :branch, 'main'
 
-# If using Digital Ocean's Ruby on Rails Marketplace framework, your username is 'rails'
-set :user,            'ubuntu'
-set :puma_threads,    [4, 16]
-set :puma_workers,    0
+set :user, 'ubuntu'
+set :puma_threads, [4, 16]
+set :puma_workers, 0
 
-# Don't change these unless you know what you're doing
-set :pty,             true
-set :use_sudo,        false
-set :stage,           :production
-set :deploy_via,      :remote_cache
-set :deploy_to,       "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
-set :puma_bind,       "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
-set :puma_state,      "#{shared_path}/tmp/pids/puma.state"
-set :puma_pid,        "#{shared_path}/tmp/pids/puma.pid"
+set :pty, true
+set :use_sudo, false
+set :stage, :production
+set :deploy_via, :remote_cache
+set :deploy_to, "/home/#{fetch(:user)}/apps/#{fetch(:application)}"
+set :puma_bind, "unix://#{shared_path}/tmp/sockets/#{fetch(:application)}-puma.sock"
+set :puma_state, "#{shared_path}/tmp/pids/puma.state"
+set :puma_pid, "#{shared_path}/tmp/pids/puma.pid"
 set :puma_access_log, "#{release_path}/log/puma.access.log"
-set :puma_error_log,  "#{release_path}/log/puma.error.log"
+set :puma_error_log, "#{release_path}/log/puma.error.log"
 set :pty, true
 
 set :ssh_options, {
@@ -31,23 +29,9 @@ set :ssh_options, {
 
 set :puma_preload_app, true
 set :puma_worker_timeout, nil
-set :puma_init_active_record, true  # Change to false when not using ActiveRecord
-
-# set :linked_files, fetch(:linked_files, []).push('config/secrets.yml')
-# set :linked_files, %w{config/secrets.yml}
+set :puma_init_active_record, true
 
 append :rbenv_map_bins, 'puma', 'pumactl'
-
-## Defaults:
-# set :scm,           :git
-# set :branch,        :main
-# set :format,        :pretty
-# set :log_level,     :debug
-# set :keep_releases, 5
-
-## Linked Files & Directories (Default None):
-# set :linked_files, %w{config/database.yml}
-# set :linked_dirs,  %w{bin log tmp/pids tmp/cache tmp/sockets vendor/bundle public/system}
 
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
@@ -59,18 +43,21 @@ namespace :puma do
   end
 
   before 'deploy:starting', 'puma:make_dirs'
-end
 
-# set :linked_files, fetch(:linked_files, []).push('.env')
+  desc 'Restart Puma'
+  task :restart do
+    on roles(:app) do
+      execute :sudo, :systemctl, :restart, 'puma_sportsInsights_production.service'
+    end
+  end
+end
 
 namespace :deploy do
   desc "Make sure local git is in sync with remote."
   task :check_revision do
     on roles(:app) do
-
-      # Update this to your branch name: master, main, etc. Here it's main
-      unless `git rev-parse HEAD` == `git rev-parse origin/master`
-        puts "WARNING: HEAD is not the same as origin/master"
+      unless `git rev-parse HEAD` == `git rev-parse origin/main`
+        puts "WARNING: HEAD is not the same as origin/main"
         puts "Run `git push` to sync changes."
         exit
       end
@@ -86,16 +73,14 @@ namespace :deploy do
   end
 
   desc 'Restart application'
-    task :restart do
-      on roles(:app), in: :sequence, wait: 5 do
-        invoke 'puma:restart'
-      end
+  task :restart do
+    on roles(:app), in: :sequence, wait: 5 do
+      invoke 'puma:restart'
+    end
   end
 
-#   before :starting,     :check_revision
-  after  :finishing,    :compile_assets
-  after  :finishing,    :cleanup
-  # after  :finishing,    :restart
+  after :finishing, 'compile_assets'
+  after :finishing, 'cleanup'
 end
 
 # ps aux | grep puma    # Get puma pid

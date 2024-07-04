@@ -27,7 +27,7 @@ bind "unix://#{shared_path}/tmp/sockets/sportsInsights-puma.sock"
 stdout_redirect "#{shared_path}/log/puma.stdout.log", "#{shared_path}/log/puma.stderr.log", true
 
 # Daemonize the server
-daemonize true
+# daemonize true
 
 # Preload the application before forking
 preload_app!
