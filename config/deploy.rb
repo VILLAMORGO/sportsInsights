@@ -33,6 +33,8 @@ set :puma_init_active_record, true
 
 append :rbenv_map_bins, 'puma', 'pumactl'
 
+append :linked_files, %w{config/puma.rb}
+
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
   task :make_dirs do
