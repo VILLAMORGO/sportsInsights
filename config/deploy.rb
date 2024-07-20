@@ -33,8 +33,6 @@ set :puma_init_active_record, true
 
 append :rbenv_map_bins, 'puma', 'pumactl'
 
-append :linked_files, %w{config/puma.rb}
-
 namespace :puma do
   desc 'Create Directories for Puma Pids and Socket'
   task :make_dirs do
@@ -84,6 +82,27 @@ namespace :deploy do
   after :finishing, 'compile_assets'
   after :finishing, 'cleanup'
 end
+
+namespace :puma_config do
+  desc "remove index.php"
+  task :rm_files do
+      on roles(:all) do
+              execute "rm -rf #{release_path}/config/puma.rb"
+      end
+  end
+end
+
+namespace :puma_config do
+  desc "add symlink to index.php"
+  task :add_files do
+      on roles(:all) do
+              execute "ln -sf #{shared_path}/puma.rb #{release_path}/config/puma.rb"
+      end
+  end
+end
+
+after "deploy:finished", "puma_config:rm_files"
+after "deploy:finished", "puma_config:add_files"
 
 # ps aux | grep puma    # Get puma pid
 # kill -s SIGUSR2 pid   # Restart puma
